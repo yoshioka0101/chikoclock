@@ -1,24 +1,22 @@
-# README
+# 作成するWebアプリ内容
+## 概要
+- 遅刻防止のためのアプリを作成したい
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+## 必要そうな機能
+- ログイン機能
+- Google mapを埋め込む機能
+- 集合場所と時間などの入力機能
+- 通知機能
+- リンク発行機能
 
-Things you may want to cover:
+## 想定している使い方
+- 友人3人と遊ぶために使用する
+- 遅刻が心配なのでこのアプリを使う
 
-* Ruby version
+１：企画した友人Aが集合時間と場所を入力します
+２：リンクを発行するとそのURLを知っている人が集合時間と場所を把握することができます
+３：リンクを共有してもらった人が出発時間と支度時間と到着予定を入力します（朝起きる時間もあり）
+４：時間になれば通知が飛んできます
+５：押してない人がいると、リンクを作成した友人Aに通知が来ます
 
-* System dependencies
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
