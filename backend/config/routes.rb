@@ -1,7 +1,6 @@
-Rails.application.routes.draw do
-  devise_for :users
-
-  resources :posts, only: [:new, :create, :show]
-
-  get "up" => "rails/health#show", as: :rails_health_check
+Rails.application.routes.draw do  
+    namespace :v1 do
+      resources :posts, only: [:index, :shoe, :create, :update, :destroy]
+      resources :users, only: [:index, :create]
+    end
 end
