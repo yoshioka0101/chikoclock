@@ -7,13 +7,15 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            posts: [] //空の初期値
+            posts: [], // 空の初期値
+            query: '', // 検索クエリ
+            searchResults: [] // 検索結果
         };
     }
 
     componentDidMount() {
         const axiosInstance = axios.create({
-            baseURL: process.env.REACT_APP_DEV_API_URL,
+            baseURL: process.env.REACT_APP_API_BASE_URL, // APIのベースURL
             headers: {
                 'Content-Type': 'application/json',
                 'X-Requested-With': 'XMLHttpRequest'
@@ -33,6 +35,30 @@ class App extends React.Component {
             });
     }
 
+    handleInputChange = (event) => {
+        this.setState({ query: event.target.value });
+    }
+
+    searchPlaces = async () => {
+        const axiosInstance = axios.create({
+            baseURL: process.env.REACT_APP_API_BASE_URL, // APIのベースURL
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            responseType: 'json'
+        });
+
+        try {
+            const response = await axiosInstance.get('/places/search', {
+                params: { query: this.state.query }
+            });
+            this.setState({ searchResults: response.data.results });
+        } catch (error) {
+            console.error('Error fetching places data:', error);
+        }
+    }
+
     render() {
         return (
             <div className="App">
@@ -47,6 +73,23 @@ class App extends React.Component {
                             ))
                         ) : (
                             <li>No posts available</li>
+                        )}
+                    </ul>
+                    <h1>Place Search</h1>
+                    <input 
+                        type="text" 
+                        value={this.state.query} 
+                        onChange={this.handleInputChange} 
+                        placeholder="Search places" 
+                    />
+                    <button onClick={this.searchPlaces}>Search</button>
+                    <ul>
+                        {this.state.searchResults.length > 0 ? (
+                            this.state.searchResults.map(place => (
+                                <li key={place.place_id}>{place.name}</li>
+                            ))
+                        ) : (
+                            <li>No search results</li>
                         )}
                     </ul>
                 </header>
