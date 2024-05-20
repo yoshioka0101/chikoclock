@@ -1,101 +1,75 @@
-import React from 'react'; // Reactをインポート
-import axios from 'axios'; // axiosをインポート
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import GoogleMapsSearch from './components/GoogleMapsSearch';
+import PostForm from './components/PostForm';
 import './App.css';
 
-class App extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            posts: [], // 空の初期値
-            query: '', // 検索クエリ
-            searchResults: [] // 検索結果
-        };
-    }
+const App = () => {
+    const [inputs, setInputs] = useState({ title: '', content: '' });
 
-    componentDidMount() {
-        const axiosInstance = axios.create({
-            baseURL: process.env.REACT_APP_API_BASE_URL, // APIのベースURL
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            responseType: 'json'
-        });
+    const handleChange = (name, event) => {
+        setInputs({ ...inputs, [name]: event.target.value });
+    };
 
-        axiosInstance.get('/posts')
-            .then(results => {
-                console.log(results);
-                this.setState({
-                    posts: results.data
-                });
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    }
-
-    handleInputChange = (event) => {
-        this.setState({ query: event.target.value });
-    }
-
-    searchPlaces = async () => {
-        const axiosInstance = axios.create({
-            baseURL: process.env.REACT_APP_API_BASE_URL, // APIのベースURL
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            responseType: 'json'
-        });
-
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         try {
-            const response = await axiosInstance.get('/places/search', {
-                params: { query: this.state.query }
+            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/posts`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify(inputs)
             });
-            this.setState({ searchResults: response.data.results });
+            if (!response.ok) {
+                throw new Error('Failed to create post');
+            }
+            alert('Post created successfully!');
+            setInputs({ title: '', content: '' });
         } catch (error) {
-            console.error('Error fetching places data:', error);
+            console.error('Error creating post:', error);
+            alert('Failed to create post');
         }
-    }
+    };
 
-    render() {
-        return (
+    return (
+        <Router>
             <div className="App">
                 <header className="App-header">
-                    <img src={logo} className="App-logo" alt="logo" />
                     <h1>Hello React</h1>
-                    <h1>Posts</h1>
-                    <ul>
-                        {this.state.posts.length > 0 ? (
-                            this.state.posts.map(post => (
-                                <li key={post.id}>{post.title}</li>
-                            ))
-                        ) : (
-                            <li>No posts available</li>
-                        )}
-                    </ul>
-                    <h1>Place Search</h1>
-                    <input 
-                        type="text" 
-                        value={this.state.query} 
-                        onChange={this.handleInputChange} 
-                        placeholder="Search places" 
-                    />
-                    <button onClick={this.searchPlaces}>Search</button>
-                    <ul>
-                        {this.state.searchResults.length > 0 ? (
-                            this.state.searchResults.map(place => (
-                                <li key={place.place_id}>{place.name}</li>
-                            ))
-                        ) : (
-                            <li>No search results</li>
-                        )}
-                    </ul>
+                    <nav>
+                        <ul>
+                            <li><Link to="/">Home</Link></li>
+                            <li><Link to="/place">Place Search</Link></li>
+                            <li><Link to="/post/new">Create Post</Link></li>
+                        </ul>
+                    </nav>
                 </header>
+                <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/place" element={<GoogleMapsSearch />} />
+                    <Route
+                        path="/post/new"
+                        element={
+                            <PostForm
+                                inputs={inputs}
+                                onChange={handleChange}
+                                onSubmit={handleSubmit}
+                            />
+                        }
+                    />
+                </Routes>
             </div>
-        );
-    }
-}
+        </Router>
+    );
+};
+
+const Home = () => (
+    <div>
+        <h2>Welcome to the Home Page</h2>
+        <p>This is the home page of our React app.</p>
+    </div>
+);
 
 export default App;
