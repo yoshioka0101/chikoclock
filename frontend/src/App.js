@@ -1,38 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import GoogleMapsSearch from './components/GoogleMapsSearch';
 import PostForm from './components/PostForm';
 import './App.css';
 
 const App = () => {
-    const [inputs, setInputs] = useState({ title: '', content: '' });
-
-    const handleChange = (name, event) => {
-        setInputs({ ...inputs, [name]: event.target.value });
-    };
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/posts`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                body: JSON.stringify(inputs)
-            });
-            if (!response.ok) {
-                throw new Error('Failed to create post');
-            }
-            alert('Post created successfully!');
-            setInputs({ title: '', content: '' });
-        } catch (error) {
-            console.error('Error creating post:', error);
-            alert('Failed to create post');
-        }
-    };
-
     return (
         <Router>
             <div className="App">
@@ -49,16 +21,7 @@ const App = () => {
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/place" element={<GoogleMapsSearch />} />
-                    <Route
-                        path="/post/new"
-                        element={
-                            <PostForm
-                                inputs={inputs}
-                                onChange={handleChange}
-                                onSubmit={handleSubmit}
-                            />
-                        }
-                    />
+                    <Route path="/post/new" element={<PostForm />} />
                 </Routes>
             </div>
         </Router>
