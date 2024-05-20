@@ -8,16 +8,13 @@ const App = () => {
     return (
         <Router>
             <div className="App">
-                <header className="App-header">
-                    <h1>Hello React</h1>
-                    <nav>
-                        <ul>
-                            <li><Link to="/">Home</Link></li>
-                            <li><Link to="/place">Place Search</Link></li>
-                            <li><Link to="/post/new">Create Post</Link></li>
-                        </ul>
-                    </nav>
-                </header>
+                <nav>
+                    <ul>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/place">Place Search</Link></li>
+                        <li><Link to="/post/new">Create Post</Link></li>
+                    </ul>
+                </nav>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/place" element={<GoogleMapsSearch />} />
