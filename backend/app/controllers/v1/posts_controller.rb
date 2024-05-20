@@ -1,6 +1,4 @@
-module V1
-
-  class PostsController < ApplicationController
+class V1::PostsController < ApplicationController
     before_action :set_post, only: %i[show destroy update]
 
     def index
@@ -47,4 +45,3 @@ module V1
       params.require(:post).permit(:title, :content)
     end
   end
-end
