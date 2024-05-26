@@ -1,0 +1,19 @@
+.post-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.post {
+    width: calc(45% - 20px);
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    list-style-type: none;
+}
+
+.post-content {
+    overflow-wrap: break-word;
+}

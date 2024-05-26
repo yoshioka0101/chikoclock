@@ -1,0 +1,15 @@
+.post-success-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.post-details {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.post-details p {
+    margin-right: 20px;
+}

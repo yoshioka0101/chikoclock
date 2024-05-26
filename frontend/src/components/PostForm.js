@@ -39,9 +39,21 @@ function PostForm() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log('Form submitted with inputs:', JSON.stringify(inputs, null, 2));
-        setInputs({ title: '', content: '', date: '', time: '', location: '' });
-        navigate('/');
+
+        fetch('/v1/posts', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(inputs),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Form submitted with inputs:', JSON.stringify(inputs, null, 2));
+            setInputs({ title: '', content: '', date: '', time: '', location: '' });
+            navigate('/post/success', { state: inputs });
+        })
+        .catch(error => console.error('Error:', error));
     };
 
     if (loadError) return <div>Error loading maps</div>;
