@@ -8,9 +8,9 @@ const PostSuccess = () => {
     const { title, content, date, time, location: postLocation } = state || {};
 
     return (
-        <div className="post-success-container"> {/* 追加 */}
-            <h2>Post Successfully Created</h2>
-            <div className="post-details"> {/* 追加 */}
+        <div className="post-success-container">
+            <h2>以下の内容で投稿を作成できました</h2>
+            <div className="post-details">
                 <p><strong>Title:</strong> {title}</p>
                 <p><strong>Content:</strong> {content}</p>
                 <p><strong>Date:</strong> {date}</p>
