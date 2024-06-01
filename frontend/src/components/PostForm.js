@@ -50,6 +50,12 @@ function PostForm() {
             alert('フォームの送信にエラーが発生しました。もう一度やり直してください。');
         });
     };
+    //暗黙的送信（Implicit submission）:https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#implicit-submission
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();  // Enterキーで送信されるのを防ぐ
+        }
+    };
 
     if (loadError) return <div>Error loading maps</div>;
     if (!isLoaded) return <div>Loading Maps...</div>;
@@ -64,6 +70,7 @@ function PostForm() {
             <Box
                 component="form"
                 onSubmit={handleSubmit}
+                onKeyDown={handleKeyDown}
                 p={3}
                 border={1}
                 borderRadius={4}
