@@ -1,8 +1,14 @@
 .post-list {
+    text-align: center;
+}
+
+ul {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 20px;
+    padding: 0;
+    list-style-type: none;
 }
 
 .post {
@@ -10,10 +16,5 @@
     border: 1px solid #ccc;
     padding: 20px;
     box-sizing: border-box;
-    text-align: center;
-    list-style-type: none;
-}
-
-.post-content {
-    overflow-wrap: break-word;
+    text-align: left;
 }
