@@ -130,16 +130,6 @@ function PostForm() {
                                 fullWidth
                             />
                         </Autocomplete>
-                        <div style={{ height: '400px', width: '100%', marginTop: '16px' }}>
-                            <GoogleMap
-                                mapContainerStyle={{ height: '100%', width: '100%' }}
-                                zoom={8}
-                                center={{ lat: -34.397, lng: 150.644 }}
-                                onClick={onMapClick}
-                            >
-                                {marker && <Marker position={{ lat: marker.lat, lng: marker.lng }} />}
-                            </GoogleMap>
-                        </div>
                     </Grid>
                     <Grid item xs={12}>
                         <Box mt={2} display="flex" justifyContent="center">
