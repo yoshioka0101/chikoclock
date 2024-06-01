@@ -10,6 +10,7 @@ const PostSuccess = () => {
     return (
         <div className="post-success-container">
             <h2>以下の内容で投稿を作成できました</h2>
+            <h3>数秒後にホームに移動します</h3>
             <div className="post-details">
                 <p><strong>Title:</strong> {title}</p>
                 <p><strong>Content:</strong> {content}</p>
