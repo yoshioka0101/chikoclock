@@ -1,37 +1,25 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import SendIcon from '@mui/icons-material/Send';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { GoogleMap, useLoadScript, Marker, Autocomplete } from '@react-google-maps/api';
+import { useLoadScript, Autocomplete } from '@react-google-maps/api';
 
 const libraries = ['places'];
 
 function PostForm() {
     const [inputs, setInputs] = useState({ title: '', content: '', date: '', time: '', location: '' });
-    const [marker, setMarker] = useState(null);
     const navigate = useNavigate();
-    
+
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
         libraries,
     });
 
-    const onMapClick = useCallback((event) => {
-        setMarker({
-            lat: event.latLng.lat(),
-            lng: event.latLng.lng(),
-        });
-        setInputs((prevInputs) => ({
-            ...prevInputs,
-            location: `${event.latLng.lat()}, ${event.latLng.lng()}`,
-        }));
-    }, []);
-
     const handleChange = (name, event) => {
-        setInputs((prevInputs) => ({
+        setInputs(prevInputs => ({
             ...prevInputs,
             [name]: event.target.value,
         }));
@@ -39,42 +27,49 @@ function PostForm() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-
-        fetch('/v1/posts', {
+        fetch('http://localhost:3000/v1/posts', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(inputs),
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('ネットワークのレスポンスが良くありません。再度実行してください');
+            }
+            return response.json();
+        })
         .then(data => {
             console.log('Form submitted with inputs:', JSON.stringify(inputs, null, 2));
             setInputs({ title: '', content: '', date: '', time: '', location: '' });
             navigate('/post/success', { state: inputs });
         })
-        .catch(error => console.error('Error:', error));
+        .catch(error => {
+            console.error('Error:', error);
+            alert('フォームの送信にエラーが発生しました。もう一度やり直してください。');
+        });
     };
 
     if (loadError) return <div>Error loading maps</div>;
-    if (!isLoaded) return <div>Loading Maps...リロードしてください</div>;
+    if (!isLoaded) return <div>Loading Maps...</div>;
 
     return (
-        <Box 
-            display="flex" 
-            justifyContent="center" 
-            alignItems="center" 
+        <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
             minHeight="100vh"
         >
-            <Box 
-                component="form" 
-                onSubmit={handleSubmit} 
-                p={3} 
-                border={1} 
-                borderRadius={4} 
-                boxShadow={3} 
-                maxWidth="600px" 
-                width="100%" 
+            <Box
+                component="form"
+                onSubmit={handleSubmit}
+                p={3}
+                border={1}
+                borderRadius={4}
+                boxShadow={3}
+                maxWidth="600px"
+                width="100%"
                 bgcolor="background.paper"
             >
                 <Grid container spacing={2}>

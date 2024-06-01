@@ -13,14 +13,14 @@ const App = () => {
                     <ul>
                         <li><Link to="/">Home</Link></li>
                         <li><Link to="/post/new">Create Post</Link></li>
-                        <li><Link to="/posts">Post List</Link></li> {/* Post List へのリンクを追加 */}
+                        <li><Link to="/posts">Post List</Link></li>
                     </ul>
                 </nav>
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/post/new" element={<PostForm />} />
                     <Route path="/post/success" element={<PostSuccess />} />
-                    <Route path="/posts" element={<PostList />} /> {/* PostList コンポーネントのルートを追加 */}
+                    <Route path="/posts" element={<PostList />} />
                 </Routes>
             </div>
         </Router>
