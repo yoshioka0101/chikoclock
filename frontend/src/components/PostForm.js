@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -12,6 +12,7 @@ const libraries = ['places'];
 function PostForm() {
     const [inputs, setInputs] = useState({ title: '', content: '', date: '', time: '', location: '' });
     const navigate = useNavigate();
+    const autocompleteRef = useRef(null);
 
     const { isLoaded, loadError } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
@@ -23,6 +24,16 @@ function PostForm() {
             ...prevInputs,
             [name]: event.target.value,
         }));
+    };
+
+    const handlePlaceChanged = () => {
+        const place = autocompleteRef.current.getPlace();
+        if (place.geometry) {
+            setInputs(prevInputs => ({
+                ...prevInputs,
+                location: place.formatted_address || place.name
+            }));
+        }
     };
 
     const handleSubmit = (event) => {
@@ -53,7 +64,7 @@ function PostForm() {
     //暗黙的送信（Implicit submission）:https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#implicit-submission
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
-            event.preventDefault();  // Enterキーで送信されるのを防ぐ
+            event.preventDefault();
         }
     };
 
@@ -123,7 +134,10 @@ function PostForm() {
                         />
                     </Grid>
                     <Grid item xs={12}>
-                        <Autocomplete>
+                       <Autocomplete
+                            onLoad={(autocomplete) => autocompleteRef.current = autocomplete}
+                            onPlaceChanged={handlePlaceChanged}
+                        >
                             <TextField
                                 label="Location"
                                 id="location"
