@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import './PostList.css';
+import { Link, useNavigate } from 'react-router-dom';
+import './FormStyles.css';
+
 
 const PostList = () => {
     const [posts, setPosts] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch('http://localhost:3000/v1/posts')
@@ -13,18 +15,20 @@ const PostList = () => {
     }, []);
 
     const handleDelete = (postId) => {
-        fetch(`http://localhost:3000/v1/posts/${postId}`, {
-            method: 'DELETE',
-        })
-        .then(response => response.json())
-        .then(data => {
-            setPosts(posts.filter(post => post.id !== postId));
-        })
-        .catch(error => console.error('Error deleting post:', error));
+        if(window.confirm('本当に削除しますか')) {
+            fetch(`http://localhost:3000/v1/posts/${postId}`, {
+                method: 'DELETE',
+            })
+            .then(response => response.json())
+            .then(data => {
+                setPosts(posts.filter(post => post.id !== postId));
+            })
+            .catch(error => console.error('Error deleting post:', error));
+        }
     };
 
     const handleEdit = (postId) => {
-        // Editボタンがクリックされたときの処理を実装
+        navigate(`/post/edit/${postId}`);
     };
 
     return (

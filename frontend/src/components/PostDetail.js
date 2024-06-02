@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 const PostDetail = () => {
-    const { id } = useParams(); // Access the post ID from URL parameters
+    const { id } = useParams();
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -23,7 +23,7 @@ const PostDetail = () => {
                 setError(err.message);
                 setLoading(false);
             });
-    }, [id]); // Dependency array to fetch data when `id` changes
+    }, [id]);
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;

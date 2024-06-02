@@ -4,6 +4,8 @@ import PostForm from './components/PostForm';
 import PostSuccess from './components/PostSuccess';
 import PostList from './components/PostList';
 import PostDetail from './components/PostDetail';
+import EditForm from './components/EditForm';
+
 import './App.css';
 
 
@@ -24,6 +26,7 @@ const App = () => {
                     <Route path="/post/success" element={<PostSuccess />} />
                     <Route path="/posts" element={<PostList />} />
                     <Route path="/post/detail/:id" element={<PostDetail />} />
+                    <Route path="/post/edit/:id" element={<EditForm />} />
                 </Routes>
             </div>
         </Router>
