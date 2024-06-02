@@ -20,8 +20,6 @@ gem 'devise'
 gem 'devise_token_auth'
 
 # CORS対策
-gem 'rack-cors'
-
 # HTTP通信
 gem 'rack-cors'
 
