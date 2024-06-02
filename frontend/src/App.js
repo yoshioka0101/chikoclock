@@ -5,9 +5,7 @@ import PostSuccess from './components/PostSuccess';
 import PostList from './components/PostList';
 import PostDetail from './components/PostDetail';
 import EditForm from './components/EditForm';
-
 import './App.css';
-
 
 const App = () => {
     return (
