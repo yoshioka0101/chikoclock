@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './PostList.css';
 
 const PostList = () => {
@@ -23,7 +24,6 @@ const PostList = () => {
     };
 
     const handleEdit = (postId) => {
-        // - [ ] TODO
         // Editボタンがクリックされたときの処理を実装
     };
 
@@ -33,7 +33,9 @@ const PostList = () => {
             <ul>
                 {posts.map((post) => (
                     <li key={post.id} className="post">
-                        <h3>{post.title}</h3>
+                        <h3>
+                            <Link to={`/post/detail/${post.id}`}>{post.title}</Link>
+                        </h3>
                         <p><strong>Date:</strong> {post.date}</p>
                         <p><strong>Time:</strong> {post.time}</p>
                         <p><strong>Location:</strong> {post.location}</p>

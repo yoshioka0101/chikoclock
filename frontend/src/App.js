@@ -1,9 +1,11 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes ,Link} from 'react-router-dom';
 import PostForm from './components/PostForm';
 import PostSuccess from './components/PostSuccess';
 import PostList from './components/PostList';
+import PostDetail from './components/PostDetail';
 import './App.css';
+
 
 const App = () => {
     return (
@@ -21,17 +23,13 @@ const App = () => {
                     <Route path="/post/new" element={<PostForm />} />
                     <Route path="/post/success" element={<PostSuccess />} />
                     <Route path="/posts" element={<PostList />} />
+                    <Route path="/post/detail/:id" element={<PostDetail />} />
                 </Routes>
             </div>
         </Router>
     );
 };
 
-const Home = () => (
-    <div>
-        <h2>Welcome to the Home Page</h2>
-        <p>This is the home page of our React app.</p>
-    </div>
-);
+const Home = () => <div>Welcome to the Home Page</div>;
 
 export default App;
