@@ -9,7 +9,6 @@ import './App.css';
 
 const App = () => {
     return (
-        <AuthProvider>
             <Router>
                 <div className="App">
                     <nav>
@@ -29,7 +28,6 @@ const App = () => {
                     </Routes>
                 </div>
             </Router>
-        </AuthProvider>
     );
 };
 

@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: .
+    volumes:
+      - .:/app:cached
+      - /app/node_modules
+    ports:
+      - "3001:3001"
+    env_file:
+      - ./.env
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+    command: ["npm", "start"]
