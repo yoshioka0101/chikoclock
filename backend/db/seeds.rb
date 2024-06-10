@@ -8,8 +8,18 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+<<<<<<< HEAD
 Post.create([
   { title: 'First Post', content: 'This is the first post content', date: '2023-05-24', time: '12:00', location: 'Tokyo Tower', created_at: Time.now, updated_at: Time.now },
   { title: 'Second Post', content: 'This is the second post content', date: '2023-05-25', time: '13:00', location: 'Tokyo Dome', created_at: Time.now, updated_at: Time.now },
   { title: 'Third Post', content: 'This is the third post content', date: '2023-05-26', time: '14:00', location: 'Shibuya Crossing', created_at: Time.now, updated_at: Time.now }
 ])
+=======
+# postの内容
+10.times do |n|
+Post.create(
+    title: "test#{n}",
+    content: "seedで作成したデータです"
+)
+end
+>>>>>>> 53bf1dec (バックエンドで作成したGETリクエストを送信できるようにする)
