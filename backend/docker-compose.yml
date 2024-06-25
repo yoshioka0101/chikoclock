@@ -1,6 +1,17 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: myapp_development
+    ports:
+      - "5432:5432"
+
   backend:
     build:
       context: .
@@ -11,17 +22,11 @@ services:
       - "3000:3000"
     environment:
       - DATABASE_HOST=db
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=password
+      - DATABASE_NAME=myapp_development
     depends_on:
       - db
-
-  db:
-    image: postgres:13
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: myapp_development
 
 volumes:
   postgres_data:

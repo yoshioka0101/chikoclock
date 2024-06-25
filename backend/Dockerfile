@@ -1,9 +1,9 @@
 ARG RUBY_VERSION=3.0.3
 FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
 
-WORKDIR /rails
+WORKDIR /app
 
-ENV RAILS_ENV="production" \
+ENV RAILS_ENV="development" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development" \
@@ -32,13 +32,13 @@ RUN apt-get update -qq && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 COPY --from=build /usr/local/bundle /usr/local/bundle
-COPY --from=build /rails /rails
+COPY --from=build /app /app
 
 RUN useradd rails --create-home --shell /bin/bash && \
     chown -R rails:rails db log storage tmp
 USER rails:rails
 
-ENTRYPOINT ["/rails/bin/docker-entrypoint"]
+ENTRYPOINT ["/app/bin/docker-entrypoint"]
 
 EXPOSE 3000
-CMD ["./bin/rails", "server"]
+CMD ["./bin/rails", "server", "-b", "0.0.0.0"]
