@@ -1,61 +1,57 @@
-import React, { useState } from 'react';
-import { signUp } from '../api/auth';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { signUp } from "../api/auth";
 
 const SignUp = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordConfirmation, setPasswordConfirmation] = useState('');
-  const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
-  const handleSignUpSubmit = async (e) => {
-    e.preventDefault();
+  const handleSignUpSubmit = async (event) => {
+    event.preventDefault();
+    const params = {
+      email: email,
+      password: password,
+      password_confirmation: passwordConfirmation,
+    };
     try {
-      const response = await signUp({ email, password, password_confirmation: passwordConfirmation });
-      if (response.status === 200) {
-        alert('サインアップに成功しました');
-        navigate('/signin');
-      }
+      await signUp(params);
+      // 登録成功後の処理を追加（例：リダイレクトやメッセージ表示）
     } catch (error) {
       console.error(error);
-      alert('サインアップに失敗しました');
     }
   };
 
   return (
-    <div>
-      <h1>SignUpページです</h1>
-      <form onSubmit={handleSignUpSubmit}>
-        <div>
-          <label htmlFor="email">Email:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="password">Password:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="passwordConfirmation">Password Confirmation:</label>
-          <input
-            type="password"
-            id="passwordConfirmation"
-            value={passwordConfirmation}
-            onChange={(e) => setPasswordConfirmation(e.target.value)}
-          />
-        </div>
-        <button type="submit">Sign Up</button>
-      </form>
-    </div>
+    <form onSubmit={handleSignUpSubmit}>
+      <div>
+        <label>Email:</label>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <label>Password:</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <label>Confirm Password:</label>
+        <input
+          type="password"
+          value={passwordConfirmation}
+          onChange={(e) => setPasswordConfirmation(e.target.value)}
+          required
+        />
+      </div>
+      <button type="submit">Sign Up</button>
+    </form>
   );
 };
 
