@@ -16,8 +16,10 @@ gem "puma", ">= 5.0"
 
 # login/logout
 gem 'devise'
-
 gem 'devise_token_auth'
+
+gem 'omniauth'
+gem 'omniauth-oauth2'
 
 # CORS対策
 # HTTP通信

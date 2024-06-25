@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount_devise_token_auth_for 'User', at: 'api/v1/auth'
+
   namespace :v1 do
     resources :posts, only: [:index, :show, :create, :update, :destroy] do
       collection do

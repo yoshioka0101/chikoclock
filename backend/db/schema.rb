@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_06_11_225921) do
+ActiveRecord::Schema[7.0].define(version: 2024_06_25_121057) do
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.text "content"
@@ -19,9 +19,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_11_225921) do
     t.date "date"
     t.time "time"
     t.string "location"
-    t.string "address"
-    t.float "latitude"
-    t.float "longitude"
     t.string "hash_string"
   end
 
