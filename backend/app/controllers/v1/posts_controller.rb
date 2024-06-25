@@ -1,47 +1,56 @@
 class V1::PostsController < ApplicationController
-    before_action :set_post, only: %i[show destroy update]
+  before_action :set_post, only: %i[show destroy update]
 
-    def index
-        posts = Post.all.order(:id)
-        render json: posts
+  def index
+    posts = Post.all.order(:id)
+    render json: posts
+  end
+
+  def show
+    render json: @post
+  end
+
+  def create
+    @post = Post.new(post_params)
+    if @post.save
+      render json: @post, status: :created
+    else
+      render json: @post.errors, status: :unprocessable_entity
     end
+  end
 
-    def show
-        render json: @post
+  def show_by_hash
+    @post = Post.find_by(hash_string: params[:hash_string])
+    if @post
+      render json: @post
+    else
+      render json: { error: "Post not found" }, status: :not_found
     end
+  end
 
-    def create
-        post = Post.new(post_params)
-        if post.save
-            render json: post, status: :created
-        else
-            render json: post.errors, status: :unprocessable_entity
-        end
+  def update
+    if @post.update(post_params)
+      render json: @post
+    else
+      render json: @post.errors
     end
+  end
 
-    def update
-        if @post.update(post_params)
-            render json: @post
-        else
-            render json: @post.errors
-        end
+  def destroy
+    if @post.destroy
+      render json: @post
+    else
+      render json: @post.errors
     end
+  end
 
-    def destroy
-        if @post.destroy
-            render json: @post
-        else
-            render json: @post.errors
-        end
-    end
+  private
 
-    private
+  def set_post
+    @post = Post.find(params[:id])
+  end
 
-    def set_post
-        @post = Post.find(params[:id])
-    end
-
-    def post_params
-        params.require(:post).permit(:title, :content, :date, :time, :location)
-    end
+  def post_params
+    params.require(:post).permit(:title, :content, :date, :time, :location)
+  end
 end

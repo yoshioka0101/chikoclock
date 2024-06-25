@@ -55,10 +55,10 @@ function PostForm() {
             console.log('Form submitted with inputs:', JSON.stringify(inputs, null, 2));
             setInputs({ title: '', content: '', date: '', time: '', location: '' });
             navigate('/post/success', { state: inputs });
-            // 成功画面に遷移した後、5秒後にホームに自動的にリダイレクト
+            // 成功画面に遷移した後、1秒後にホームに自動的にリダイレクト
             setTimeout(() => {
                 navigate('/');
-            }, 5000); // 5000ミリ秒 = 5秒
+            }, 1000); // 1000ミリ秒 = 1秒
         })
         .catch(error => {
             console.error('Error:', error);

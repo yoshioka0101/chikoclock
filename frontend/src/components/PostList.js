@@ -31,6 +31,13 @@ const PostList = () => {
         navigate(`/post/edit/${postId}`);
     };
 
+    const handleShare = (hashString) => {
+        const shareLink = `${window.location.origin}/post/hash/${hashString}`;
+        navigator.clipboard.writeText(shareLink)
+            .then(() => alert('リンクがクリップボードにコピーされました: ' + shareLink))
+            .catch(err => console.error('リンクのコピーに失敗しました:', err));
+    };
+
     return (
         <div className="post-list">
             <h2>Post List</h2>
@@ -45,6 +52,7 @@ const PostList = () => {
                         <p><strong>Location:</strong> {post.location}</p>
                         <button className="edit-button" onClick={() => handleEdit(post.id)}>Edit</button>
                         <button onClick={() => handleDelete(post.id)}>Delete</button>
+                        <button className="share-button" onClick={() => handleShare(post.hash_string)}>Share</button>
                     </li>
                 ))}
             </ul>
