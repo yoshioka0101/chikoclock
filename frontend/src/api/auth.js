@@ -3,7 +3,7 @@ import Cookies from 'js-cookie';
 
 // サインアップ
 export const signUp = (params) => {
-  return client.post('/auth', params);
+  return client.post('/auth', params); // confirm_success_url を追加
 };
 
 // サインイン

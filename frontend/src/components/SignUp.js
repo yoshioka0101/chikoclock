@@ -1,23 +1,25 @@
-import React, { useState } from "react";
-import { signUp } from "../api/auth";
+import React, { useState } from 'react';
+import { signUp } from '../api/auth';
 
 const SignUp = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
   const handleSignUpSubmit = async (event) => {
     event.preventDefault();
-    const params = {
-      email: email,
-      password: password,
-      password_confirmation: passwordConfirmation,
-    };
+
     try {
-      await signUp(params);
-      // 登録成功後の処理を追加（例：リダイレクトやメッセージ表示）
+      const params = {
+        email,
+        password,
+        password_confirmation: passwordConfirmation,
+        confirm_success_url: 'http://localhost:3001/' // リダイレクト先のURL
+      };
+      const response = await signUp(params);
+      console.log(response);
     } catch (error) {
-      console.error(error);
+    console.error(error);
     }
   };
 
@@ -49,7 +51,7 @@ const SignUp = () => {
           onChange={(e) => setPasswordConfirmation(e.target.value)}
           required
         />
-      </div>
+      </div>      
       <button type="submit">Sign Up</button>
     </form>
   );
