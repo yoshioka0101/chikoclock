@@ -1,57 +1,53 @@
 import React, { useState } from 'react';
-import { signUp } from '../api/auth';
+import axios from 'axios';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
-  const handleSignUpSubmit = async (event) => {
+  const handleSignUp = async (event) => {
     event.preventDefault();
 
     try {
-      const params = {
-        email,
-        password,
+      const response = await axios.post('http://localhost:3000/api/v1/auth', {
+        email: email,
+        password: password,
         password_confirmation: passwordConfirmation,
-        confirm_success_url: 'http://localhost:3001/' // リダイレクト先のURL
-      };
-      const response = await signUp(params);
-      console.log(response);
+        confirm_success_url: 'http://localhost:3001/'
+      });
+
+      console.log(response.data);
     } catch (error) {
-    console.error(error);
+      console.error(error);
     }
   };
 
   return (
-    <form onSubmit={handleSignUpSubmit}>
-      <div>
-        <label>Email:</label>
-        <input
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label>Password:</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <label>Confirm Password:</label>
-        <input
-          type="password"
-          value={passwordConfirmation}
-          onChange={(e) => setPasswordConfirmation(e.target.value)}
-          required
-        />
-      </div>      
+    <form onSubmit={handleSignUp}>
+      <input
+        type="email"
+        placeholder="Email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+        autoComplete="new-password"
+      />
+      <input
+        type="password"
+        placeholder="Confirm Password"
+        value={passwordConfirmation}
+        onChange={(e) => setPasswordConfirmation(e.target.value)}
+        required
+        autoComplete="new-password"
+      />
       <button type="submit">Sign Up</button>
     </form>
   );
