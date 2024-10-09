@@ -39,12 +39,21 @@ const PostList = () => {
         navigate(`/post/edit/${postId}`);
     };
 
-    const handleShare = (hashString) => {
-        const shareLink = `${window.location.origin}/post/hash/${hashString}`;
-        navigator.clipboard.writeText(shareLink)
-            .then(() => alert('リンクがクリップボードにコピーされました: ' + shareLink))
-            .catch(err => console.error('リンクのコピーに失敗しました:', err));
-    };
+    useEffect(() => {
+        // LINE Social Plugins のボタンをロード
+        const script = document.createElement('script');
+        script.src = "https://www.line-website.com/social-plugins/js/thirdparty/loader.min.js";
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+
+        // LINEボタンの再レンダリングを強制的に行う
+        script.onload = () => {
+            if (window.LineIt) {
+                window.LineIt.loadButton(); // LINEのボタンを強制ロード
+            }
+        };
+    }, []);
 
     return (
         <div className="post-list">
@@ -55,11 +64,20 @@ const PostList = () => {
                         <h3>
                             <Link to={`/post/detail/${post.id}`}>{post.title}</Link>
                         </h3>
-                        <p><strong>Date:</strong> {post.created_at}</p>
+                        <p><strong>Date:</strong> {post.date}</p>
+                        <p><strong>Time:</strong> {post.time}</p>
                         <p><strong>Location:</strong> {post.location}</p>
                         <button className="edit-button" onClick={() => handleEdit(post.id)}>Edit</button>
                         <button onClick={() => handleDelete(post.id)}>Delete</button>
-                        <button className="share-button" onClick={() => handleShare(post.hash_string)}>Share</button>
+                        {/* LINE公式の「LINEで送る」ボタン */}
+                        <div className="line-it-button"
+                            data-lang="ja"
+                            data-type="share-a"
+                            data-url={`${window.location.origin}/post/detail/${post.id}`}
+                            data-color="default"
+                            data-size="small"
+                            data-count="true">
+                        </div>
                     </li>
                 ))}
             </ul>
