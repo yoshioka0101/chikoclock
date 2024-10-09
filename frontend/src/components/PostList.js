@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { parse } from 'date-fns';
+import { parseISO, compareDesc } from 'date-fns';
 import './FormStyles.css';
 
 const PostList = () => {
@@ -11,11 +11,11 @@ const PostList = () => {
         fetch('http://localhost:3000/v1/posts')
             .then(response => response.json())
             .then(data => {
-                // timeフィールドでソート
+                // created_atフィールドで降順にソート
                 const sortedPosts = data.sort((a, b) => {
-                    const timeA = parse(a.time, 'HH:mm', new Date()); // 時間をパース
-                    const timeB = parse(b.time, 'HH:mm', new Date());
-                    return timeA - timeB; // 時間で昇順にソート
+                    const dateA = parseISO(a.created_at); // ISO 8601形式の日時をパース
+                    const dateB = parseISO(b.created_at);
+                    return compareDesc(dateA, dateB); // 降順ソート
                 });
                 setPosts(sortedPosts);
             })
@@ -29,7 +29,7 @@ const PostList = () => {
             })
             .then(response => response.json())
             .then(() => {
-                setPosts(posts.filter(post => post.id !== postId))
+                setPosts(posts.filter(post => post.id !== postId));
             })
             .catch(error => console.error('Error deleting post:', error));
         }
@@ -55,7 +55,7 @@ const PostList = () => {
                         <h3>
                             <Link to={`/post/detail/${post.id}`}>{post.title}</Link>
                         </h3>
-                        <p><strong>Date:</strong> {post.date}</p>
+                        <p><strong>Date:</strong> {post.created_at}</p>
                         <p><strong>Location:</strong> {post.location}</p>
                         <button className="edit-button" onClick={() => handleEdit(post.id)}>Edit</button>
                         <button onClick={() => handleDelete(post.id)}>Delete</button>
