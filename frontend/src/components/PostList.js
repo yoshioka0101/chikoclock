@@ -48,7 +48,6 @@ const PostList = () => {
                             <Link to={`/post/detail/${post.id}`}>{post.title}</Link>
                         </h3>
                         <p><strong>Date:</strong> {post.date}</p>
-                        <p><strong>Time:</strong> {post.time}</p>
                         <p><strong>Location:</strong> {post.location}</p>
                         <button className="edit-button" onClick={() => handleEdit(post.id)}>Edit</button>
                         <button onClick={() => handleDelete(post.id)}>Delete</button>
