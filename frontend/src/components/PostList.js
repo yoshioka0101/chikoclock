@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { parse } from 'date-fns';
 import './FormStyles.css';
-
 
 const PostList = () => {
     const [posts, setPosts] = useState([]);
@@ -10,18 +10,26 @@ const PostList = () => {
     useEffect(() => {
         fetch('http://localhost:3000/v1/posts')
             .then(response => response.json())
-            .then(data => setPosts(data))
+            .then(data => {
+                // timeフィールドでソート
+                const sortedPosts = data.sort((a, b) => {
+                    const timeA = parse(a.time, 'HH:mm', new Date()); // 時間をパース
+                    const timeB = parse(b.time, 'HH:mm', new Date());
+                    return timeA - timeB; // 時間で昇順にソート
+                });
+                setPosts(sortedPosts);
+            })
             .catch(error => console.error('Error fetching posts:', error));
     }, []);
 
     const handleDelete = (postId) => {
-        if(window.confirm('本当に削除しますか')) {
+        if (window.confirm('本当に削除しますか')) {
             fetch(`http://localhost:3000/v1/posts/${postId}`, {
                 method: 'DELETE',
             })
             .then(response => response.json())
-            .then(data => {
-                setPosts(posts.filter(post => post.id !== postId));
+            .then(() => {
+                setPosts(posts.filter(post => post.id !== postId))
             })
             .catch(error => console.error('Error deleting post:', error));
         }
