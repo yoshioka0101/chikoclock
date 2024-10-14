@@ -57,7 +57,7 @@ function PostForm() {
             navigate('/post/success', { state: inputs });
             // 成功画面に遷移した後、1秒後にホームに自動的にリダイレクト
             setTimeout(() => {
-                navigate('/');
+                navigate('/posts');
             }, 1000); // 1000ミリ秒 = 1秒
         })
         .catch(error => {

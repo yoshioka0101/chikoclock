@@ -27,7 +27,7 @@ ul {
 }
 
 .post {
-    width: calc(45% - 20px);
+    width: calc(50% - 430px);
     border: 1px solid #ccc;
     padding: 20px;
     box-sizing: border-box;
