@@ -6,6 +6,7 @@ import SendIcon from '@mui/icons-material/Send';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
 import { useLoadScript, Autocomplete } from '@react-google-maps/api';
+import { normalize } from '@geolonia/normalize-japanese-addresses';
 
 const libraries = ['places'];
 
@@ -36,14 +37,41 @@ function PostForm() {
         }
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+
+        // 住所を正規化
+        let normalizedAddress = {};
+        if (inputs.location) {
+            try {
+                normalizedAddress = await normalize(inputs.location);
+                console.log('Normalized Address:', normalizedAddress);
+            } catch (error) {
+                console.error('住所の正規化に失敗しました:', error);
+                alert('住所の正規化に失敗しました。もう一度やり直してください。');
+                return;
+            }
+        }
+
+        // 正規化した住所をinputsに追加
+        const postData = {
+            ...inputs,
+            location: {
+                pref: normalizedAddress.pref,
+                city: normalizedAddress.city,
+                town: normalizedAddress.town,
+                addr: normalizedAddress.addr,
+                lat: normalizedAddress.point?.lat,
+                lng: normalizedAddress.point?.lng,
+            },
+        };
+
         fetch('http://localhost:3000/v1/posts', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(inputs),
+            body: JSON.stringify(postData),
         })
         .then(response => {
             if (!response.ok) {
@@ -51,10 +79,10 @@ function PostForm() {
             }
             return response.json();
         })
-        .then(data => {
-            console.log('Form submitted with inputs:', JSON.stringify(inputs, null, 2));
+                .then(data => {
+            console.log('Form submitted with inputs:', JSON.stringify(postData, null, 2));
             setInputs({ title: '', content: '', date: '', time: '', location: '' });
-            navigate('/post/success', { state: inputs });
+            navigate('/post/success', { state: postDatas });
             // 成功画面に遷移した後、1秒後にホームに自動的にリダイレクト
             setTimeout(() => {
                 navigate('/posts');
