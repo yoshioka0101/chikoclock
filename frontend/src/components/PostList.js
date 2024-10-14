@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { parseISO, compareDesc } from 'date-fns';
+import { parseISO, compareDesc, format } from 'date-fns';
 import './FormStyles.css';
 import LineShareButton from './LineShareButton'; // 別ファイルのLINEシェアボタンをインポート
 
@@ -58,21 +58,24 @@ const PostList = () => {
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <ul>
-                {posts.map((post) => (
-                    <li key={post.id} className="post">
-                        <h3>
-                            <Link to={`/post/detail/${post.id}`}>{post.title}</Link>
-                        </h3>
-                        <p><strong>Date:</strong> {post.date}</p>
-                        <p><strong>Time:</strong> {post.time}</p>
-                        <p><strong>Location:</strong> {post.location}</p>
-                        <button className="edit-button" onClick={() => handleEdit(post.id)}>Edit</button>
-                        <button onClick={() => handleDelete(post.id)}>Delete</button>
+                {posts.map((post) => {
+                    const formattedDate = format(parseISO(post.created_at), 'yyyy/MM/dd HH:mm');
 
-                        {/* LineShareButtonコンポーネントを使用 */}
-                        <LineShareButton shareUrl={`${window.location.origin}/post/detail/${post.id}`} />
-                    </li>
-                ))}
+                    return (
+                        <li key={post.id} className="post">
+                            <h3>
+                                <Link to={`/post/detail/${post.id}`}>{post.title}</Link>
+                            </h3>
+                            <p><strong>Date:</strong> {formattedDate}</p>
+                            <p><strong>Location:</strong> {post.location}</p>
+                            <button className="edit-button" onClick={() => handleEdit(post.id)}>Edit</button>
+                            <button onClick={() => handleDelete(post.id)}>Delete</button>
+
+                            {/* LineShareButtonコンポーネントを使用 */}
+                            <LineShareButton shareUrl={`${window.location.origin}/post/detail/${post.id}`} />
+                        </li>
+                    );
+                })}
             </ul>
         </div>
     );
