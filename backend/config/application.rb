@@ -18,12 +18,16 @@ module Chikoclock
     # not contain `.rb` files, or that should not be reloaded or eager loaded.
     # Common ones are `templates`, `generators`, or `middleware`, for example.
     # config.autoload_lib(ignore: %w(assets tasks))
-
+    config.session_store :cookie_store, key: '_interslice_session'
+    config.middleware.use ActionDispatch::Cookies # Required for all session management
+    config.middleware.use ActionDispatch::Session::CookieStore, config.session_options
+    config.middleware.use ActionDispatch::Flash
     config.middleware.insert_before 0, Rack::Cors do
       allow do
-        origins "*"
+        origins "localhost:3000"
         resource "*",
                  headers: :any,
+                 :expose => ['access-token', 'expiry', 'token-type', 'uid', 'client'],
                  methods: [:get, :post, :patch, :delete, :options, :head]
       end
     end
