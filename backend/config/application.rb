@@ -22,15 +22,6 @@ module Chikoclock
     config.middleware.use ActionDispatch::Cookies # Required for all session management
     config.middleware.use ActionDispatch::Session::CookieStore, config.session_options
     config.middleware.use ActionDispatch::Flash
-    config.middleware.insert_before 0, Rack::Cors do
-      allow do
-        origins "localhost:3000"
-        resource "*",
-                 headers: :any,
-                 :expose => ['access-token', 'expiry', 'token-type', 'uid', 'client'],
-                 methods: [:get, :post, :patch, :delete, :options, :head]
-      end
-    end
     # Configuration for the application, engines, and railties goes here.
     #
     # These settings can be overridden in specific environments using the files
