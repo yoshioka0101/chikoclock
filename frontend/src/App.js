@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import PostForm from './components/PostForm';
 import PostSuccess from './components/PostSuccess';
@@ -8,29 +8,74 @@ import EditForm from './components/EditForm';
 import './App.css';
 
 const App = () => {
+    const [lines, setLines] = useState([]);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        fetch('/train_status')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTPエラー: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => setLines(data))
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                setError('現在データの取得に問題が生じております。再度お試しください。');
+            });
+    }, []);
+
     return (
-            <Router>
-                <div className="App">
-                    <nav>
-                        <ul>
-                            <li><Link to="/">Home</Link></li>
-                            <li><Link to="/post/new">Create Post</Link></li>
-                            <li><Link to="/posts">Post List</Link></li>
-                        </ul>
-                    </nav>
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/post/new" element={<PostForm />} />
-                        <Route path="/post/success" element={<PostSuccess />} />
-                        <Route path="/posts" element={<PostList />} />
-                        <Route path="/post/detail/:id" element={<PostDetail />} />
-                        <Route path="/post/edit/:id" element={<EditForm />} />
-                    </Routes>
-                </div>
-            </Router>
+        <Router>
+            <div className="App">
+                <nav>
+                    <ul>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/post/new">Create Post</Link></li>
+                        <li><Link to="/posts">Post List</Link></li>
+                    </ul>
+                </nav>
+                <Routes>
+                    <Route path="/" element={
+                        <div>
+                            <h1>Welcome to the Home Page</h1>
+                            {error ? (  // エラーが発生した場合
+                                <div>{error}</div>
+                            ) : (
+                                <div>
+                                    <h2>列車の運行状況</h2>
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>路線</th>
+                                                <th>状況</th>
+                                                <th>詳細</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {lines.map((line, index) => (
+                                                <tr key={index}>
+                                                    <td>{line.line}</td>
+                                                    <td>{line.status}</td>
+                                                    <td>{line.details}</td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            )}
+                        </div>
+                    } />
+                    <Route path="/post/new" element={<PostForm />} />
+                    <Route path="/post/success" element={<PostSuccess />} />
+                    <Route path="/posts" element={<PostList />} />
+                    <Route path="/post/detail/:id" element={<PostDetail />} />
+                    <Route path="/post/edit/:id" element={<EditForm />} />
+                </Routes>
+            </div>
+        </Router>
     );
 };
-
-const Home = () => <div>Welcome to the Home Page</div>;
 
 export default App;
