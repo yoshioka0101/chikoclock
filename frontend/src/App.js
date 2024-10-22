@@ -12,20 +12,22 @@ const App = () => {
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        fetch('/train_status')
+        fetch('http://localhost:3000/v1/train_status')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTPエラー: ${response.status}`);
                 }
                 return response.json();
             })
-            .then(data => setLines(data))
+            .then(data => {
+                console.log(data);  // デバッグ用に取得データを表示
+                setLines(data);
+            })
             .catch(error => {
                 console.error('Error fetching data:', error);
                 setError('現在データの取得に問題が生じております。再度お試しください。');
             });
     }, []);
-
     return (
         <Router>
             <div className="App">
