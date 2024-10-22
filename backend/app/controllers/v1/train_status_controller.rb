@@ -3,7 +3,7 @@ class V1::TrainStatusController < ApplicationController
 
   def index
     begin
-      @lines = fetch_all_areas
+      @lines = fetch_all_areas.reject { |line| line[:status] == '平常運転' || line[:line].blank? || line[:status].blank? || line[:details].blank? }
       render json: @lines
     rescue => e
       handle_error(e)
