@@ -14,7 +14,12 @@ class V1::TrainStatusController < ApplicationController
       '北海道' => 'https://transit.yahoo.co.jp/diainfo/area/2',
       '東北' => 'https://transit.yahoo.co.jp/diainfo/area/3',
       '首都圏' => 'https://transit.yahoo.co.jp/diainfo/area/4'
-    }
+      '中部' => 'https://transit.yahoo.co.jp/diainfo/area/5'
+      '近畿' => 'https://transit.yahoo.co.jp/diainfo/area/6'
+      '九州' => 'https://transit.yahoo.co.jp/diainfo/area/7'
+      '中国' => 'https://transit.yahoo.co.jp/diainfo/area/8'
+      '四国' => 'https://transit.yahoo.co.jp/diainfo/area/9'
+      }
 
     if urls[area]
       begin
