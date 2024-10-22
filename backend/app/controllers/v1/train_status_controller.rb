@@ -1,4 +1,11 @@
 class V1::TrainStatusController < ApplicationController
+  require 'open-uri'
+  require 'nokogiri'
+  require 'timeout'
+
+  MAX_RETRIES = 3
+  TIMEOUT_SECONDS = 10
+
   def index
     area = params[:area]
 
@@ -13,13 +20,20 @@ class V1::TrainStatusController < ApplicationController
       begin
         @lines = fetch_area_data(area, urls[area])
 
+        # 空の情報または平常運行しかない場合の処理
         if @lines.empty?
-          render json: {message: "遅延情報はありません"}
+          render json: { message: "遅延情報はありません" }
         else
           render json: @lines
         end
+      rescue Timeout::Error
+        render json: { error: "リクエストがタイムアウトしました" }, status: :request_timeout
+      rescue OpenURI::HTTPError => e
+        log_error("HTTPエラー: #{e.message}")
+        render json: { error: "データの取得に失敗しました" }, status: :bad_gateway
       rescue => e
-        handle_error(e)
+        log_error("サーバーエラー: #{e.message}")
+        render json: { error: "サーバー内部エラーが発生しました" }, status: :internal_server_error
       end
     else
       render json: { error: "エリアが正しくありません" }, status: :bad_request
@@ -28,34 +42,45 @@ class V1::TrainStatusController < ApplicationController
 
   private
 
+  # エラーハンドリングを含むデータ取得メソッド
   def fetch_area_data(area_name, url)
+    attempts = 0
+
     begin
-      html = URI.open(url)
-      doc = Nokogiri::HTML(html)
+      attempts += 1
+      Timeout.timeout(TIMEOUT_SECONDS) do
+        html = URI.open(url)
+        doc = Nokogiri::HTML(html)
 
-      lines = []
-      doc.css('.elmTblLstLine tr').each do |row|
-        line = row.css('td')[0]&.text
-        status = row.css('td')[1]&.text
-        details = row.css('td')[2]&.text
+        lines = []
+        doc.css('.elmTblLstLine tr').each do |row|
+          line = row.css('td')[0]&.text
+          status = row.css('td')[1]&.text
+          details = row.css('td')[2]&.text
 
-        # 「平常運転」や空行を除外
-        if line.present? && status != '平常運転' && status.present?
-          lines << { area: area_name, line: line, status: status, details: details }
+          # 「平常運転」や空行を除外
+          if line.present? && status != '平常運転' && status.present?
+            lines << { area: area_name, line: line, status: status, details: details }
+          end
         end
-      end
 
-      lines
+        lines
+      end
+    rescue Timeout::Error
+      log_error("タイムアウトエラー (#{area_name})")
+      retry if attempts < MAX_RETRIES
+      raise
     rescue OpenURI::HTTPError => e
-      Rails.logger.error("HTTPエラー (#{area_name}): #{e.message}")
-      []
+      log_error("HTTPエラー (#{area_name}): #{e.message}")
+      raise
     rescue => e
-      Rails.logger.error("サーバーエラー (#{area_name}): #{e.message}")
-      []
+      log_error("不明なエラー (#{area_name}): #{e.message}")
+      raise
     end
   end
 
-  def handle_error(error)
-    render json: { error: 'サーバーエラーが発生しました' }, status: :internal_server_error
+  # ログを記録するメソッド
+  def log_error(message)
+    Rails.logger.error(message)
   end
 end
