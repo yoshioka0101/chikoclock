@@ -11,6 +11,8 @@ const libraries = ['places'];
 
 function PostForm() {
     const [inputs, setInputs] = useState({ title: '', content: '', date: '', time: '', location: '' });
+    const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false); // ロード状態
     const navigate = useNavigate();
     const autocompleteRef = useRef(null);
 
@@ -18,6 +20,17 @@ function PostForm() {
         googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAPS_API_KEY,
         libraries,
     });
+
+    // 入力値のバリデーション関数
+    const validateInputs = () => {
+        let errors = {};
+        if (!inputs.title) errors.title = 'タイトルは必須です';
+        if (!inputs.content) errors.content = 'コンテンツは必須です';
+        if (!inputs.date) errors.date = '日付は必須です';
+        if (!inputs.time) errors.time = '時間は必須です';
+        if (!inputs.location) errors.location = '場所は必須です';
+        return errors;
+    };
 
     const handleChange = (name, event) => {
         setInputs(prevInputs => ({
@@ -38,6 +51,12 @@ function PostForm() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        const validationErrors = validateInputs();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+        setIsLoading(true); // ロード開始
         fetch('http://localhost:3000/v1/posts', {
             method: 'POST',
             headers: {
@@ -54,26 +73,28 @@ function PostForm() {
         .then(data => {
             console.log('Form submitted with inputs:', JSON.stringify(inputs, null, 2));
             setInputs({ title: '', content: '', date: '', time: '', location: '' });
+            setIsLoading(false); // ロード終了
             navigate('/post/success', { state: inputs });
-            // 成功画面に遷移した後、1秒後にホームに自動的にリダイレクト
             setTimeout(() => {
                 navigate('/posts');
-            }, 1000); // 1000ミリ秒 = 1秒
+            }, 1000);
         })
         .catch(error => {
             console.error('Error:', error);
+            setIsLoading(false); // ロード終了
             alert('フォームの送信にエラーが発生しました。もう一度やり直してください。');
         });
     };
-    //暗黙的送信（Implicit submission）:https://html.spec.whatwg.org/multipage/form-control-infrastructure.html#implicit-submission
+
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             event.preventDefault();
         }
     };
 
-    if (loadError) return <div>Error loading maps</div>;
-    if (!isLoaded) return <div>Loading Maps...</div>;
+    // Google Maps APIの読み込みエラー時の処理
+    if (loadError) return <div>Google Mapsの読み込みに失敗しました。後でもう一度お試しください。</div>;
+    if (!isLoaded) return <div>Google Mapsを読み込んでいます...</div>;
 
     return (
         <Box
@@ -102,6 +123,8 @@ function PostForm() {
                             value={inputs.title}
                             onChange={(e) => handleChange('title', e)}
                             fullWidth
+                            error={!!errors.title}
+                            helperText={errors.title}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -113,6 +136,8 @@ function PostForm() {
                             value={inputs.content}
                             onChange={(e) => handleChange('content', e)}
                             fullWidth
+                            error={!!errors.content}
+                            helperText={errors.content}
                         />
                     </Grid>
                     <Grid item xs={6}>
@@ -124,6 +149,8 @@ function PostForm() {
                             onChange={(e) => handleChange('date', e)}
                             fullWidth
                             InputLabelProps={{ shrink: true }}
+                            error={!!errors.date}
+                            helperText={errors.date}
                         />
                     </Grid>
                     <Grid item xs={6}>
@@ -135,6 +162,8 @@ function PostForm() {
                             onChange={(e) => handleChange('time', e)}
                             fullWidth
                             InputLabelProps={{ shrink: true }}
+                            error={!!errors.time}
+                            helperText={errors.time}
                         />
                     </Grid>
                     <Grid item xs={12}>
@@ -148,6 +177,8 @@ function PostForm() {
                                 value={inputs.location}
                                 onChange={(e) => handleChange('location', e)}
                                 fullWidth
+                                error={!!errors.location}
+                                helperText={errors.location}
                             />
                         </Autocomplete>
                     </Grid>
@@ -158,8 +189,9 @@ function PostForm() {
                                 color="primary"
                                 type="submit"
                                 endIcon={<SendIcon />}
+                                disabled={isLoading} // 送信中はボタンを無効化
                             >
-                                CREATE
+                                {isLoading ? '送信中...' : 'CREATE'}
                             </Button>
                         </Box>
                     </Grid>
