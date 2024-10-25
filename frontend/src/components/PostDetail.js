@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { parseISO, format } from 'date-fns';
 
 const PostDetail = () => {
     const { id } = useParams();
@@ -28,13 +29,17 @@ const PostDetail = () => {
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
+    // 日付をフォーマット
+    const formattedDate = format(parseISO(post.date), 'yyyy年MM月dd日');
+    const formattedTime = format(parseISO(post.time), 'HH:mm');
+
     return (
         <div>
             <h1>{post.title}</h1>
             <p>{post.content}</p>
-            <p>Date: {post.date}</p>
-            <p>Time: {post.time}</p>
-            <p>Location: {post.location}</p>
+            <p>日付: {formattedDate}</p>
+            <p>時間: {formattedTime}</p>
+            <p>場所: {post.location}</p>
         </div>
     );
 };

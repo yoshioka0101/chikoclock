@@ -19,9 +19,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_06_11_225921) do
     t.date "date"
     t.time "time"
     t.string "location"
-    t.string "address"
-    t.float "latitude"
-    t.float "longitude"
     t.string "hash_string"
   end
 

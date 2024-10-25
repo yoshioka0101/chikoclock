@@ -28,6 +28,68 @@
   color: #61dafb;
 }
 
+table {
+  width: 80%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  font-size: 18px;
+  text-align: center;
+}
+
+th, td {
+  padding: 12px;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+td {
+  text-align: center;
+}
+
+/* 余計な隙間や横幅調整のために、セルの幅を固定 */
+th, td {
+  width: 33.33%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* テーブルのホバー効果 */
+tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* テーブル全体を画面中央に揃える */
+table {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* テキストの中央寄せに加え、表のレイアウトを最適化 */
+table {
+  border-spacing: 0;
+}
+
+tbody td {
+  vertical-align: middle;
+}
+
+/* エラーメッセージのスタイル */
+.error {
+  color: red;
+  font-size: 18px;
+  text-align: center;
+  margin: 20px;
+}
+
+/* その他のUI要素とのスペースを調整 */
+nav ul {
+  margin-bottom: 20px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
