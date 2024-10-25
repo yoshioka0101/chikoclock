@@ -69,6 +69,26 @@ const App = () => {
                                         <input type="radio" value="首都圏" checked={selectedArea === '首都圏'} onChange={handleAreaChange} />
                                         首都圏
                                     </label>
+                                    <label>
+                                        <input type="radio" value="中部" checked={selectedArea === '中部'} onChange={handleAreaChange} />
+                                        中部
+                                    </label>
+                                    <label>
+                                        <input type="radio" value="関西" checked={selectedArea === '関西'} onChange={handleAreaChange} />
+                                        関西
+                                    </label>
+                                    <label>
+                                        <input type="radio" value="中国" checked={selectedArea === '中国'} onChange={handleAreaChange} />
+                                        中国
+                                    </label>
+                                    <label>
+                                        <input type="radio" value="四国" checked={selectedArea === '四国'} onChange={handleAreaChange} />
+                                        四国
+                                    </label>
+                                    <label>
+                                        <input type="radio" value="九州" checked={selectedArea === '九州'} onChange={handleAreaChange} />
+                                        九州
+                                    </label>
                                 </form>
                                 <button onClick={fetchTrainStatus}>選択</button>
                             </div>
