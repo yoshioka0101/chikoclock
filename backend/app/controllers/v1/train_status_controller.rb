@@ -19,13 +19,13 @@ class V1::TrainStatusController < ApplicationController
       '九州' => 'https://transit.yahoo.co.jp/diainfo/area/7',
       '中国' => 'https://transit.yahoo.co.jp/diainfo/area/8',
       '四国' => 'https://transit.yahoo.co.jp/diainfo/area/9'
-      }
+    }
 
     if urls[area]
       begin
         @lines = fetch_area_data(area, urls[area])
 
-        # 空の情報または平常運行しかない場合の処理
+        # 空の情報または平常運転しかない場合の処理
         if @lines.empty?
           render json: { message: "遅延情報はありません" }
         else
@@ -59,13 +59,22 @@ class V1::TrainStatusController < ApplicationController
 
         lines = []
         doc.css('.elmTblLstLine tr').each do |row|
-          line = row.css('td')[0]&.text
+          # 路線名とリンクを取得
+          line_element = row.css('td')[0]&.css('a')&.first
+          line_name = line_element&.text
+          line_url = line_element&.[]('href')
           status = row.css('td')[1]&.text
           details = row.css('td')[2]&.text
 
           # 「平常運転」や空行を除外
-          if line.present? && status != '平常運転' && status.present?
-            lines << { area: area_name, line: line, status: status, details: details }
+          if line_name.present? && status != '平常運転' && status.present?
+            lines << {
+              area: area_name,
+              line: line_name,
+              url: line_url ? "https://transit.yahoo.co.jp#{line_url}" : nil, # 絶対URLに変換
+              status: status,
+              details: details
+            }
           end
         end
 
