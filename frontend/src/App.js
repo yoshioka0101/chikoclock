@@ -110,11 +110,15 @@ const App = () => {
                                             </thead>
                                             <tbody>
                                                 {lines.map((line, index) => (
-                                                    <tr key={index}>
-                                                        <td>{line.line}</td>
-                                                        <td>{line.status}</td>
-                                                        <td>{line.details}</td>
-                                                    </tr>
+                                                <tr key={index}>
+                                                    <td>
+                                                    <a href={line.url} target="_blank" rel="noopener noreferrer">
+                                                        {line.line}
+                                                    </a>
+                                                    </td>
+                                                    <td>{line.status}</td>
+                                                    <td>{line.details}</td>
+                                                </tr>
                                                 ))}
                                             </tbody>
                                         </table>
