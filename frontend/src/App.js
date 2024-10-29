@@ -22,11 +22,11 @@ const App = () => {
                 <nav>
                     <ul>
                         <li><Link to="/">Home</Link></li>
-                        <li><Link to="/post/new">Create Post</Link></li>
-                        <li><Link to="/posts">Post List</Link></li>
-                        <li><Link to="/login">Login</Link></li>
-                        <li><Link to="/signup">Sign Up</Link></li>
-                        <li><button onClick={handleSignOut}>Sign Out</button></li>
+                        <li><Link to="/post/new">新規作成</Link></li>
+                        <li><Link to="/posts">投稿一覧</Link></li>
+                        <li><Link to="/login">ログイン</Link></li>
+                        <li><Link to="/signup">新規登録</Link></li>
+                        <li><button onClick={handleSignOut}>ログアウト</button></li>
                     </ul>
                 </nav>
                 <Routes>
