@@ -14,7 +14,7 @@ Devise.setup do |config|
   # confirmation, reset password and unlock tokens in the database.
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
-  # config.secret_key = '0c88d2bb5a9ff80a49ce53f8f44a952ee42db93a9d1ac165041844029ba3e9a0db463216a22472056650ba7358d41ce2337e4f91c7826afa0b7cbfa898e1fa35'
+  # config.secret_key = 'f74ae89ba2883272d0b27f27b28ed7652e54ac77295c6de3ba6d4ee41d40d17b9fa5595dd3609902e7df50d87331450a02c41548ffdccd3cd8845ab8ed6d2804'
 
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
@@ -97,7 +97,7 @@ Devise.setup do |config|
   # Notice that if you are skipping storage for all authentication paths, you
   # may want to disable generating routes to Devise's sessions controller by
   # passing skip: :sessions to `devise_for` in your config/routes.rb
-  config.skip_session_storage = [:http_auth]
+  config.skip_session_storage = [:http_auth, :params_auth]
 
   # By default, Devise cleans up the CSRF token on authentication to
   # avoid CSRF token fixation attacks. This means that, when using AJAX
@@ -126,7 +126,7 @@ Devise.setup do |config|
   config.stretches = Rails.env.test? ? 1 : 12
 
   # Set up a pepper to generate the hashed password.
-  # config.pepper = '44cdf6580972f0e1d225368699737e7b332e33a79e588f11d1c297618e55f715e55eb03aa71051a12aa3cefd4a79c96e1e4d1f42fbf00afd2f75a445028c9f88'
+  # config.pepper = 'd6efdf8ea3bda6922bbb56d24c1d9690143176cf6f38693a63a4fdecbe4d2a0e3c733db466b252657e911deebb0021780b95b51c1d5fbf0d41f1cb31e91b2625'
 
   # Send a notification to the original email when the user's email is changed.
   # config.send_email_changed_notification = false
@@ -264,7 +264,6 @@ Devise.setup do |config|
   #
   # The "*/*" below is required to match Internet Explorer requests.
   # config.navigational_formats = ['*/*', :html, :turbo_stream]
-  config.navigational_formats = [:json]
 
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete
