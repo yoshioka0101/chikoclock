@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       end
     end
     resources :users, only: [:index, :create]
+    get 'train_status', to: 'train_status#index'
     get 'places/search', to: 'places#search'
   end
 end
