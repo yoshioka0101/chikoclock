@@ -1,4 +1,5 @@
 class Post < ApplicationRecord
+  belongs_to :user
   before_create :generate_unique_hash_string
 
   private

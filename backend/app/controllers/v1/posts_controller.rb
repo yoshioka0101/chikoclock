@@ -1,8 +1,9 @@
 class V1::PostsController < ApplicationController
   before_action :set_post, only: %i[show destroy update]
+  before_action :authenticate_v1_user!
 
   def index
-    posts = Post.all.order(:id)
+    posts = current_v1_user.posts.order(:id) # ログイン中のユーザーの投稿を取得
     render json: posts
   end
 
@@ -11,20 +12,11 @@ class V1::PostsController < ApplicationController
   end
 
   def create
-    @post = Post.new(post_params)
+    @post = current_v1_user.posts.build(post_params) # 投稿をログイン中のユーザーに関連付ける
     if @post.save
       render json: @post, status: :created
     else
       render json: @post.errors, status: :unprocessable_entity
-    end
-  end
-
-  def show_by_hash
-    @post = Post.find_by(hash_string: params[:hash_string])
-    if @post
-      render json: @post
-    else
-      render json: { error: "Post not found" }, status: :not_found
     end
   end
 
@@ -47,7 +39,9 @@ class V1::PostsController < ApplicationController
   private
 
   def set_post
-    @post = Post.find(params[:id])
+    @post = current_v1_user.posts.find(params[:id]) # ログイン中のユーザーの投稿に限定
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Post not found" }, status: :not_found
   end
 
   def post_params

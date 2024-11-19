@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, Navigate } from 'react-router-dom';
 import PostForm from './components/PostForm';
 import PostSuccess from './components/PostSuccess';
 import PostList from './components/PostList';
@@ -13,40 +13,44 @@ import { signOut } from './auth';
 import './App.css';
 
 const App = () => {
-    const handleSignOut = () => {
-        signOut();
-        alert('サインアウトしました');
-    };
-    //const [message, setMessage] = useState('');  // メッセージ用
-    const [error, setError] = useState(null);
-    const [selectedArea, setSelectedArea] = useState('北海道');  // デフォルトエリア
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [selectedArea, setSelectedArea] = useState('北海道');
     const [lines, setLines] = useState([]);
     const [message, setMessage] = useState('');
     const [trainError, setTrainError] = useState(null);
-
     const [weather, setWeather] = useState(null);
-    const [weatherError, setWeatherError] = useState(null);  
 
+    // ログアウト処理
+    const handleSignOut = () => {
+        signOut();
+        setIsLoggedIn(false);
+        setCurrentUser(null);
+        localStorage.removeItem('currentUser');
+        alert('サインアウトしました');
+    };
+
+    // 選択したエリアの変更
     const handleAreaChange = (e) => {
         setSelectedArea(e.target.value);
     };
 
+    // 鉄道情報の取得
     const fetchTrainStatus = () => {
-        //選択された地域に応じてAPIを呼び出す
         fetch(`http://localhost:3000/v1/train_status?area=${selectedArea}`)
             .then(response => {
                 if (!response.ok) {
-                    throw { code: response.status };
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 return response.json();
             })
             .then(data => {
                 if (data.message) {
                     setMessage(data.message);
-                    setLines([]);  // 遅延情報がない場合は空に設定
+                    setLines([]);
                 } else {
                     setMessage('');
-                    setLines(data);  // 正常にデータがあればセット
+                    setLines(data);
                 }
                 setTrainError(null);
             })
@@ -56,26 +60,31 @@ const App = () => {
             });
     };
 
+    // 天気情報の取得
     const fetchWeather = () => {
         fetch("http://localhost:3000/v1/weather")
             .then(response => {
                 if (!response.ok) {
-                    throw { code: response.status };
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 return response.json();
             })
             .then(data => {
                 setWeather(data.data);
-                setWeatherError(null);
             })
             .catch(error => {
                 console.error('Error fetching weather data:', error);
-                setWeatherError(error);
             });
     };
 
+    // 初期化処理
     useEffect(() => {
         fetchWeather();
+        const user = localStorage.getItem('currentUser');
+        if (user) {
+            setIsLoggedIn(true);
+            setCurrentUser(JSON.parse(user));
+        }
     }, []);
 
     return (
@@ -84,11 +93,18 @@ const App = () => {
                 <nav>
                     <ul>
                         <li><Link to="/">Home</Link></li>
-                        <li><Link to="/post/new">新規作成</Link></li>
-                        <li><Link to="/posts">投稿一覧</Link></li>
-                        <li><Link to="/login">ログイン</Link></li>
-                        <li><Link to="/signup">新規登録</Link></li>
-                        <li><button onClick={handleSignOut}>ログアウト</button></li>
+                        {isLoggedIn && <li><Link to="/post/new">新規作成</Link></li>}
+                        {isLoggedIn && <li><Link to="/posts">投稿一覧</Link></li>}
+                        {!isLoggedIn && <li><Link to="/login">ログイン</Link></li>}
+                        {!isLoggedIn && <li><Link to="/signup">新規登録</Link></li>}
+                        {isLoggedIn && (
+                            <li>
+                                <button onClick={handleSignOut}>ログアウト</button>
+                            </li>
+                        )}
+                        {isLoggedIn && currentUser && (
+                            <li><span>ログイン中: {currentUser.email}</span></li>
+                        )}
                     </ul>
                 </nav>
                 <Routes>
@@ -133,7 +149,7 @@ const App = () => {
                                         九州
                                     </label>
                                 </form>
-                                    <button onClick={fetchTrainStatus}>選択</button>
+                                <button onClick={fetchTrainStatus}>選択</button>
                                 {trainError ? (
                                     <ErrorHandler error={trainError} />
                                 ) : message ? (
@@ -168,13 +184,20 @@ const App = () => {
                             <WeatherTable weatherData={weather} selectedArea={selectedArea} />
                         </div>
                     } />
-                    <Route path="/post/new" element={<PostForm />} />
-                    <Route path="/post/success" element={<PostSuccess />} />
-                    <Route path="/posts" element={<PostList />} />
-                    <Route path="/post/detail/:id" element={<PostDetail />} />
-                    <Route path="/post/edit/:id" element={<EditForm />} />
-                    <Route path="/login" element={<LoginForm />} />
-                    <Route path="/signup" element={<SignUpForm />} />
+                    {isLoggedIn ? (
+                        <>
+                            <Route path="/post/new" element={<PostForm userId={currentUser?.id} />} />
+                            <Route path="/posts" element={<PostList userId={currentUser?.id} />} />
+                            <Route path="/post/detail/:id" element={<PostDetail />} />
+                            <Route path="/post/edit/:id" element={<EditForm />} />
+                        </>
+                    ) : (
+                        <>
+                            <Route path="/login" element={<LoginForm setIsLoggedIn={setIsLoggedIn} setCurrentUser={setCurrentUser} />} />
+                            <Route path="/signup" element={<SignUpForm />} />
+                            <Route path="*" element={<Navigate to="/login" />} />
+                        </>
+                    )}
                 </Routes>
             </div>
         </Router>

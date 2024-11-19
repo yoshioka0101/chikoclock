@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_28_160650) do
+ActiveRecord::Schema[7.0].define(version: 2024_10_28_165329) do
   create_table "posts", force: :cascade do |t|
     t.string "title"
     t.text "content"
@@ -20,6 +20,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_28_160650) do
     t.time "time"
     t.string "location"
     t.string "hash_string"
+    t.integer "user_id", null: false
+    t.index ["user_id"], name: "index_posts_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -52,4 +54,5 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_28_160650) do
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
+  add_foreign_key "posts", "users"
 end
