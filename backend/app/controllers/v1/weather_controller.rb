@@ -32,11 +32,10 @@ module V1
       # レートリミットチェック
       if @@request_count >= REQUEST_LIMIT
         retry_after_seconds = (@@limit_reset_time - Time.now).to_i
-        render json: { 
-          message: "リクエストの上限に達しました。#{retry_after_seconds}秒後に再試行してください。",
+        raise ErrorHandler.rate_limit(
+          "リクエストの上限に達しました。#{retry_after_seconds}秒後に再試行してください。",
           retry_after: retry_after_seconds
-        }, status: :too_many_requests
-        return
+        )
       end
 
       appid = ENV['YAHOO_WEATHER_APPID']
@@ -47,25 +46,13 @@ module V1
       uri = URI.parse(url)
       response = Net::HTTP.get_response(uri)
 
-      case response
-      when Net::HTTPSuccess
-        weather_data = JSON.parse(response.body)
-        @@request_count += LOCATIONS.size # 成功時にカウントを増やす
-        render json: { message: "天気情報の取得に成功しました", data: weather_data }, status: :ok
-      when Net::HTTPForbidden
-        render json: { message: "APIキーが無効です。設定を確認してください。" }, status: :forbidden
-      when Net::HTTPRequestTimeout
-        render json: { message: "Yahooサーバーが停止しているか、負荷が大きい可能性があります。しばらくしてから再度お試しください" }, status: :request_timeout
-      when Net::HTTPTooManyRequests
-        render json: { 
-          message: "リクエストが多くなっています。再試行してください。",}, status: :too_many_requests
-      when Net::HTTPInternalServerError 
-        render json: { message: "サーバーエラーが発生しました。時間を置いて再試行してください。" }, status: :internal_server_error
-      when Net::HTTPServiceUnavailable
-        render json: { message: "サーバー側の問題が発生しています。時間を置いて再試行してください。" }, status: :service_unavailable
-      else
-        render json: { message: "予期しないエラーが発生しました。しばらく時間をおいて再度お試しください。" }, status: :internal_server_error
+      unless response.is_a?(Net::HTTPSuccess)
+        raise ErrorHandler.from_http_response(response)
       end
+
+      weather_data = JSON.parse(response.body)
+      @@request_count += LOCATIONS.size # 成功時にカウントを増やす
+      render json: { message: "天気情報の取得に成功しました", data: weather_data }, status: :ok
     end
   end
 end
