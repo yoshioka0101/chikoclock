@@ -15,6 +15,7 @@ module Chikoclock
     config.api_only = true
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Session::CookieStore, key: '_chikoclock_session'
+    config.autoload_paths << Rails.root.join("app", "lib")
     
     # Please, add to the `ignore` list any other `lib` subdirectories that do
     # not contain `.rb` files, or that should not be reloaded or eager loaded.

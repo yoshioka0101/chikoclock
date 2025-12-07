@@ -21,28 +21,27 @@ class V1::TrainStatusController < ApplicationController
       '四国' => 'https://transit.yahoo.co.jp/diainfo/area/9'
     }
 
-    if urls[area]
-      begin
-        @lines = fetch_area_data(area, urls[area])
-
-        # 空の情報または平常運転しかない場合の処理
-        if @lines.empty?
-          render json: { message: "遅延情報はありません" }
-        else
-          render json: @lines
-        end
-      rescue Timeout::Error
-        render json: { error: "リクエストがタイムアウトしました" }, status: :request_timeout
-      rescue OpenURI::HTTPError => e
-        log_error("HTTPエラー: #{e.message}")
-        render json: { error: "データの取得に失敗しました" }, status: :bad_gateway
-      rescue => e
-        log_error("サーバーエラー: #{e.message}")
-        render json: { error: "サーバー内部エラーが発生しました" }, status: :internal_server_error
-      end
-    else
-      render json: { error: "エリアが正しくありません" }, status: :bad_request
+    unless urls[area]
+      raise ErrorHandler.bad_request("エリアが正しくありません")
     end
+
+    @lines = fetch_area_data(area, urls[area])
+
+    # 空の情報または平常運転しかない場合の処理
+    if @lines.empty?
+      render json: { message: "遅延情報はありません" }
+    else
+      render json: @lines
+    end
+
+  rescue Timeout::Error
+    raise ErrorHandler.timeout("リクエストがタイムアウトしました")
+  rescue OpenURI::HTTPError => e
+    log_error(e, context: "TrainStatus HTTP")
+    raise ErrorHandler.bad_gateway("データの取得に失敗しました")
+  rescue StandardError => e
+    log_error(e, context: "TrainStatus Unknown")
+    raise ErrorHandler.internal_server_error("サーバー内部エラーが発生しました")
   end
 
   private
@@ -81,20 +80,15 @@ class V1::TrainStatusController < ApplicationController
         lines
       end
     rescue Timeout::Error
-      log_error("タイムアウトエラー (#{area_name})")
+      log_error("タイムアウトエラー (#{area_name})", context: "TrainStatus Timeout")
       retry if attempts < MAX_RETRIES
       raise
     rescue OpenURI::HTTPError => e
-      log_error("HTTPエラー (#{area_name}): #{e.message}")
+      log_error("HTTPエラー (#{area_name}): #{e.message}", context: "TrainStatus HTTP")
       raise
     rescue => e
-      log_error("不明なエラー (#{area_name}): #{e.message}")
+      log_error("不明なエラー (#{area_name}): #{e.message}", context: "TrainStatus Unknown")
       raise
     end
-  end
-
-  # ログを記録するメソッド
-  def log_error(message)
-    Rails.logger.error(message)
   end
 end
